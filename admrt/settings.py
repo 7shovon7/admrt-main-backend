@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'core',
+    'space_host',
+    # TODO: move corsheaders above core
     'corsheaders'
 ]
 
