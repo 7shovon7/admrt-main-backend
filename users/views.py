@@ -1,6 +1,6 @@
 from django.conf import settings
-from rest_framework import permissions, status
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework import permissions, status, generics
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -9,7 +9,7 @@ from .models import SpaceHost, Advertiser
 from .serializers import SpaceHostSerializer, AdvertiserSerializer
 
 
-class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
         user_role = self.request.user.user_role
@@ -40,3 +40,13 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericV
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(queryset, many=False)
         return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return super().create(request, *args, **kwargs)
+        else:
+            serializer = self.get_serializer(queryset, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data)

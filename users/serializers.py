@@ -19,7 +19,8 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True, read_only=True)
     socials = SocialMediaSerializer(many=True, read_only=True)
     joined = serializers.DateTimeField(source='user.date_joined', read_only=True)
-    id = serializers.IntegerField(source='user.id', default=serializers.CurrentUserDefault(), read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+    profile_id = serializers.IntegerField(source='id', read_only=True)
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
@@ -27,7 +28,7 @@ class AdvertiserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user']
+        fields = ['user_id', 'profile_id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user']
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -54,7 +55,8 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     portfolios = PortfolioSerializer(many=True, read_only=True)
     socials = SocialMediaSerializer(many=True, read_only=True)
     joined = serializers.DateTimeField(source='user.date_joined', read_only=True)
-    id = serializers.IntegerField(source='user.id', default=serializers.CurrentUserDefault(), read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+    profile_id = serializers.IntegerField(source='id', read_only=True)
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
@@ -62,4 +64,4 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user']
+        fields = ['user_id', 'profile_id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user']
