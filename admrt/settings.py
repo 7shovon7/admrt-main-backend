@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'core',
+    'users',
+    # TODO: move corsheaders above core
     'corsheaders'
 ]
 
@@ -154,3 +156,7 @@ DJOSER = {
         'current_user': 'core.serializers.UserSerializer'
     }
 }
+
+# global constants for the project
+K_SPACE_HOST_ID = 'space_host'
+K_ADVERTISER_ID = 'advertiser'

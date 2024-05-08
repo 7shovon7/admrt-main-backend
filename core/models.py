@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -27,12 +28,9 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    SPACE_HOST = 'space_host'
-    ADVERTISER = 'advertiser'
-
     ROLE_CHOICES = [
-        (SPACE_HOST, 'Space Host'),
-        (ADVERTISER, 'Advertiser')
+        (settings.K_SPACE_HOST_ID, 'Space Host'),
+        (settings.K_ADVERTISER_ID, 'Advertiser')
     ]
 
     email = models.EmailField(max_length=255, unique=True)
