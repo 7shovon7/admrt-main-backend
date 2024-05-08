@@ -1,17 +1,22 @@
-from django.conf import settings
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser
+from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language
+        
 
-
-class UserSerializer(serializers.ModelSerializer):
+class SocialMediaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = settings.AUTH_USER_MODEL
-        fields = ['full_name', 'date_joined']
+        model = SocialMedia
+        fields = ['id', 'social_media', 'username', 'url']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdvertiserProduct
+        fields = ['id', 'name', 'description', 'image']
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
-    products = serializers.SerializerMethodField()
-    socials = serializers.SerializerMethodField()
+    products = ProductSerializer(many=True)
+    socials = SocialMediaSerializer(many=True)
     joined = serializers.DateTimeField(source='user.date_joined')
     id = serializers.IntegerField(source='user.id')
     full_name = serializers.CharField(source='user.full_name')
@@ -19,25 +24,31 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advertiser
         fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials']
-    
-    def get_products(self, obj):
-        try:
-            return [{"name": p.name, "description": p.description, "image": p.image} for p in obj.products.all()]
-        except AttributeError:
-            return []
-    
-    def get_socials(self, obj):
-        try:
-            return [{"social_media": s.social_media, "username": s.username, "url": s.url} for s in obj.socials.all()]
-        except AttributeError:
-            return []
+        
+
+class TopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ['id', 'title']
+        
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ['id', 'title', 'file_url', 'youtube_url']
+
+
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = ['id', 'language']
 
 
 class SpaceHostSerializer(serializers.ModelSerializer):
-    topics = serializers.SerializerMethodField()
-    languages = serializers.SerializerMethodField()
-    portfolios = serializers.SerializerMethodField()
-    socials = serializers.SerializerMethodField()
+    topics = TopicSerializer(many=True)
+    languages = LanguageSerializer(many=True)
+    portfolios = PortfolioSerializer(many=True)
+    socials = SocialMediaSerializer(many=True)
     joined = serializers.DateTimeField(source='user.date_joined')
     id = serializers.IntegerField(source='user.id')
     full_name = serializers.CharField(source='user.full_name')
@@ -46,26 +57,3 @@ class SpaceHostSerializer(serializers.ModelSerializer):
         model = SpaceHost
         fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
     
-    def get_topics(self, obj):
-        try:
-            return [topic.title for topic in obj.topics.all()]
-        except AttributeError:
-            return []
-    
-    def get_languages(self, obj):
-        try:
-            return [language.language for language in obj.languages.all()]
-        except AttributeError:
-            return []
-    
-    def get_portfolios(self, obj):
-        try:
-            return [{"title": p.title, "file_url": p.file_url, "youtube_url": p.youtube_url} for p in obj.portfolios.all()]
-        except AttributeError:
-            return []
-    
-    def get_socials(self, obj):
-        try:
-            return [{"social_media": s.social_media, "username": s.username, "url": s.url} for s in obj.socials.all()]
-        except AttributeError:
-            return []
