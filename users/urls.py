@@ -3,14 +3,29 @@ from rest_framework.routers import SimpleRouter
 from . import views
 
 
-router2 = SimpleRouter()
-router2.register('', views.TopicListCreateAPIView, basename='topic_view_set')
+product_router = SimpleRouter()
+product_router.register('', views.AdvertiserProductViewSet, basename='product_view_set')
+
+social_router = SimpleRouter()
+social_router.register('', views.SocialMediaViewSet, basename='social_view_set')
+
+portfolio_router = SimpleRouter()
+portfolio_router.register('', views.PortfolioViewSet, basename='portfolio_view_set')
+
+language_router = SimpleRouter()
+language_router.register('', views.LanguageViewSet, basename='language_view_set')
+
+topic_router = SimpleRouter()
+topic_router.register('', views.TopicViewSet, basename='topic_view_set')
 
 router = SimpleRouter()
 router.register('', views.UserViewSet, basename='user_view_set')
 
 urlpatterns = [
-    # path('space-host/', views.SpaceHostListCreateAPIView.as_view(), name='space_host_list'),
-    path('topics/', include(router2.urls)),
+    path('products/', include(product_router.urls)),
+    path('socials/', include(social_router.urls)),
+    path('portfolios/', include(portfolio_router.urls)),
+    path('languages/', include(language_router.urls)),
+    path('topics/', include(topic_router.urls)),
     path('', include(router.urls)),
 ]

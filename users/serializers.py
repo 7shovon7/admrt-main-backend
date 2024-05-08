@@ -31,9 +31,6 @@ class AdvertiserSerializer(serializers.ModelSerializer):
 
 
 class TopicSerializer(serializers.ModelSerializer):
-    # user = serializers.IntegerField(source='user.user.id', read_only=True)
-    # user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = Topic
         fields = ['id', 'title']
