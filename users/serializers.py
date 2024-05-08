@@ -20,10 +20,13 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     joined = serializers.DateTimeField(source='user.date_joined')
     id = serializers.IntegerField(source='user.id')
     full_name = serializers.CharField(source='user.full_name')
+    email = serializers.EmailField(source='user.email')
+    phone = serializers.CharField(source='user.phone')
+    country = serializers.CharField(source='user.country')
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'country', 'email', 'phone', 'website', 'joined', 'products', 'socials']
         
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -52,8 +55,11 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     joined = serializers.DateTimeField(source='user.date_joined')
     id = serializers.IntegerField(source='user.id')
     full_name = serializers.CharField(source='user.full_name')
+    email = serializers.EmailField(source='user.email')
+    phone = serializers.CharField(source='user.phone')
+    country = serializers.CharField(source='user.country')
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'country', 'email', 'phone', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
     
