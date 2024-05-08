@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language
 
 
-# Get Profile Serializers
+# Profile Serializers
 class SocialMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialMedia
@@ -16,19 +16,19 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True)
-    socials = SocialMediaSerializer(many=True)
-    joined = serializers.DateTimeField(source='user.date_joined')
-    id = serializers.IntegerField(source='user.id')
-    full_name = serializers.CharField(source='user.full_name')
-    # email = serializers.EmailField(source='user.email')
-    # phone = serializers.CharField(source='user.phone')
-    # country = serializers.CharField(source='user.country')
+    products = ProductSerializer(many=True, read_only=True)
+    socials = SocialMediaSerializer(many=True, read_only=True)
+    joined = serializers.DateTimeField(source='user.date_joined', read_only=True)
+    id = serializers.IntegerField(source='user.id', default=serializers.CurrentUserDefault(), read_only=True)
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    full_name = serializers.CharField(source='user.full_name', read_only=True)
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials']
-        
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user']
+
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,20 +49,17 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 
 class SpaceHostSerializer(serializers.ModelSerializer):
-    topics = TopicSerializer(many=True)
-    languages = LanguageSerializer(many=True)
-    portfolios = PortfolioSerializer(many=True)
-    socials = SocialMediaSerializer(many=True)
-    joined = serializers.DateTimeField(source='user.date_joined')
-    id = serializers.IntegerField(source='user.id')
-    full_name = serializers.CharField(source='user.full_name')
-    # email = serializers.EmailField(source='user.email')
-    # phone = serializers.CharField(source='user.phone')
-    # country = serializers.CharField(source='user.country')
+    topics = TopicSerializer(many=True, read_only=True)
+    languages = LanguageSerializer(many=True, read_only=True)
+    portfolios = PortfolioSerializer(many=True, read_only=True)
+    socials = SocialMediaSerializer(many=True, read_only=True)
+    joined = serializers.DateTimeField(source='user.date_joined', read_only=True)
+    id = serializers.IntegerField(source='user.id', default=serializers.CurrentUserDefault(), read_only=True)
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    full_name = serializers.CharField(source='user.full_name', read_only=True)
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
-
-
-# Create profile serializers
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user']
