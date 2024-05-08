@@ -1,14 +1,24 @@
+from django.conf import settings
 from rest_framework import serializers
 from .models import SpaceHost, Advertiser
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = settings.AUTH_USER_MODEL
+        fields = ['full_name', 'date_joined']
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField()
     socials = serializers.SerializerMethodField()
+    joined = serializers.DateTimeField(source='user.date_joined')
+    id = serializers.IntegerField(source='user.id')
+    full_name = serializers.CharField(source='user.full_name')
 
     class Meta:
         model = Advertiser
-        fields = ['profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials']
     
     def get_products(self, obj):
         try:
@@ -28,10 +38,13 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     languages = serializers.SerializerMethodField()
     portfolios = serializers.SerializerMethodField()
     socials = serializers.SerializerMethodField()
+    joined = serializers.DateTimeField(source='user.date_joined')
+    id = serializers.IntegerField(source='user.id')
+    full_name = serializers.CharField(source='user.full_name')
     
     class Meta:
         model = SpaceHost
-        fields = ['profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials']
     
     def get_topics(self, obj):
         try:
