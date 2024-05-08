@@ -8,7 +8,7 @@ class PlatformBaseUser(models.Model):
     description = models.TextField(null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(max_length=255, null=True, blank=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name='profile')
 
     def __str__(self) -> str:
         return self.user.full_name
@@ -45,7 +45,7 @@ class Advertiser(PlatformBaseUser):
 
 
 class Topic(models.Model):
-    title = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=100)
     user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='topics')
 
     def __str__(self) -> str:
@@ -56,7 +56,7 @@ class Topic(models.Model):
 
 
 class AdvertiserProduct(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     image = models.URLField(max_length=1024, null=True, blank=True)
     user = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name='products')
@@ -69,7 +69,7 @@ class AdvertiserProduct(models.Model):
 
 
 class Language(models.Model):
-    language = models.CharField(max_length=100, unique=True)
+    language = models.CharField(max_length=100)
     user = models.ForeignKey(SpaceHost, related_name='languages', on_delete=models.CASCADE)
 
     def __str__(self) -> str:
