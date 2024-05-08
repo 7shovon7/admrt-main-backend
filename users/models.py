@@ -8,7 +8,6 @@ class PlatformBaseUser(models.Model):
     description = models.TextField(null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(max_length=255, null=True, blank=True)
-    # joined = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
