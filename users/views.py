@@ -1,15 +1,118 @@
 from django.conf import settings
-from rest_framework import permissions, status, generics
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework import permissions, status
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from core.serializers import UserSerializer
-from .models import SpaceHost, Advertiser, Topic
-from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSerializer
+from .models import SpaceHost, Advertiser, Topic, Language, Portfolio, SocialMedia, AdvertiserProduct
+from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSerializer, LanguageSerializer, PortfolioSerializer, SocialMediaSerializer, ProductSerializer
 
 
-class TopicListCreateAPIView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+def object_is_not_related(cls, attribute: str):
+    if not hasattr(cls, attribute):
+        return Response(status=status.HTTP_403_FORBIDDEN, data={"details": "wrong profile element"})
+    return
+
+
+class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return AdvertiserProduct.objects.filter(user=self.request.user.id).all()
+    
+    def create(self, request, *args, **kwargs):
+        related_object_issue = object_is_not_related(request.user.profile, 'advertiser')
+        if related_object_issue:
+            return related_object_issue
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        else:
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user.profile.advertiser)
+    
+
+class SocialMediaViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SocialMediaSerializer
+
+    def get_queryset(self):
+        return SocialMedia.objects.filter(user=self.request.user.id).all()
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        else:
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user.profile)
+
+
+class PortfolioViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PortfolioSerializer
+
+    def get_queryset(self):
+        return Portfolio.objects.filter(user=self.request.user.id).all()
+    
+    def create(self, request, *args, **kwargs):
+        related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
+        if related_object_issue:
+            return related_object_issue
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        else:
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user.profile.spacehost)
+
+
+class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = LanguageSerializer
+
+    def get_queryset(self):
+        return Language.objects.filter(user=self.request.user.id).all()
+    
+    def create(self, request, *args, **kwargs):
+        related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
+        if related_object_issue:
+            return related_object_issue
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        else:
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user.profile.spacehost)
+
+
+class TopicViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TopicSerializer
 
@@ -17,6 +120,9 @@ class TopicListCreateAPIView(ListModelMixin, CreateModelMixin, RetrieveModelMixi
         return Topic.objects.filter(user=self.request.user.id).all()
     
     def create(self, request, *args, **kwargs):
+        related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
+        if related_object_issue:
+            return related_object_issue
         data = request.data
         if isinstance(data, list):
             serializer = self.get_serializer(data=data, many=True)
