@@ -156,3 +156,7 @@ DJOSER = {
         'current_user': 'core.serializers.UserSerializer'
     }
 }
+
+# global constants for the project
+K_SPACE_HOST_ID = 'space_host'
+K_ADVERTISER_ID = 'advertiser'

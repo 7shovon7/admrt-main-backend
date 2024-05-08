@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import SpaceHost, Topic, Language, Portfolio, SocialMedia, Advertiser, AdvertiserProduct
 
-# Register your models here.
+
+admin.site.register([SpaceHost, Topic, Language, Portfolio, SocialMedia, Advertiser, AdvertiserProduct])

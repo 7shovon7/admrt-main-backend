@@ -11,12 +11,21 @@ class PlatformBaseUser(models.Model):
     joined = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return self.user.full_name
+
 
 class SpaceHost(PlatformBaseUser):
     long_term_service_availability = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.user.full_name
+
+    def save(self, *args, **kwargs):
+        if not self.user.user_role == settings.K_SPACE_HOST_ID:
+            print(f"user needs to have role of {settings.K_SPACE_HOST_ID} to be saved in SpaceHost model")
+        else:
+            return super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['user__full_name']
@@ -25,6 +34,12 @@ class SpaceHost(PlatformBaseUser):
 class Advertiser(PlatformBaseUser):
     def __str__(self) -> str:
         return self.user.full_name
+
+    def save(self, *args, **kwargs):
+        if not self.user.user_role == settings.K_ADVERTISER_ID:
+            print(f"user needs to have role of {settings.K_ADVERTISER_ID} to be saved in Advertiser model")
+        else:
+            return super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['user__full_name']
@@ -100,7 +115,7 @@ class SocialMedia(models.Model):
     social_media = models.CharField(max_length=2, choices=SM_CHOICES)
     username = models.CharField(max_length=100, null=True, blank=True)
     url = models.URLField(max_length=255, null=True, blank=True)
-    user = models.ForeignKey(PlatformBaseUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(PlatformBaseUser, on_delete=models.CASCADE, related_name='socials')
 
     def __str__(self) -> str:
         if self.url is not None:
