@@ -6,23 +6,22 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as Ba
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'email', 'password', 'full_name', 'user_role']
+        fields = ['id', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
 
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'email', 'full_name', 'user_role']
+        fields = ['id', 'email', 'full_name', 'phone', 'country', 'user_role']
 
 class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token['id'] = user.id
-        # token['username'] = user.username
         token['email'] = user.email
         token['full_name'] = user.first_name
-        # token['first_name'] = user.first_name
-        # token['last_name'] = user.last_name
+        token['phone'] = user.phone
+        token['country'] = user.country
         token['user_role'] = user.user_role
         return token
     
@@ -30,11 +29,10 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data = super().validate(attrs)
         data['user'] = {
             "id": self.user.id,
-            # "username": self.user.username,
             "email": self.user.email,
             "full_name": self.user.full_name,
-            # "first_name": self.user.first_name,
-            # "last_name": self.user.last_name,
+            "phone": self.user.phone,
+            "country": self.user.country,
             "user_role": self.user.user_role
         }
         return data
