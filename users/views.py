@@ -1,9 +1,11 @@
+from config import DEBUG
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
 # from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
+import traceback
 from core.serializers import UserSerializer
 from .models import SpaceHost, Advertiser
 from .serializers import SpaceHostSerializer, AdvertiserSerializer
@@ -28,4 +30,6 @@ class UserViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
                 return Response(status=status.HTTP_404_NOT_FOUND)
             return Response(serializer(user).data)
         except AttributeError:
+            if DEBUG:
+                traceback.print_exc()
             return Response(status=status.HTTP_401_UNAUTHORIZED, data={'details': "No user found"})
