@@ -1,12 +1,29 @@
 from typing import Any, Dict
+from django.conf import settings
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
+
+from users.models import SpaceHost, Advertiser
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
         fields = ['id', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user_role = validated_data.get('user_role')
+        
+        profile_class = None
+        if user_role == settings.K_SPACE_HOST_ID:
+            profile_class = SpaceHost
+        elif user_role == settings.K_ADVERTISER_ID:
+            profile_class = Advertiser
+        if profile_class is not None:
+            profile_class.objects.create(user=user)
+        
+        return user
 
 
 class UserSerializer(BaseUserSerializer):
