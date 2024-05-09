@@ -112,7 +112,7 @@ class SocialMedia(models.Model):
     ]
 
     social_media = models.CharField(max_length=2, choices=SM_CHOICES)
-    username = models.CharField(max_length=100, null=True, blank=True)
+    # username = models.CharField(max_length=100, null=True, blank=True)
     url = models.URLField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(PlatformBaseUser, on_delete=models.CASCADE, related_name='socials')
 
