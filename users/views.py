@@ -1,6 +1,6 @@
 from django.conf import settings
 from rest_framework import permissions, status
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -15,7 +15,7 @@ def object_is_not_related(cls, attribute: str):
     return
 
 
-class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ProductSerializer
 
@@ -40,7 +40,7 @@ class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMi
         return serializer.save(user=self.request.user.profile.advertiser)
     
 
-class SocialMediaViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class SocialMediaViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = SocialMediaSerializer
 
@@ -62,7 +62,7 @@ class SocialMediaViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, G
         return serializer.save(user=self.request.user.profile)
 
 
-class PortfolioViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class PortfolioViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PortfolioSerializer
 
@@ -87,7 +87,7 @@ class PortfolioViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Gen
         return serializer.save(user=self.request.user.profile.spacehost)
 
 
-class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LanguageSerializer
 
@@ -112,7 +112,7 @@ class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Gene
         return serializer.save(user=self.request.user.profile.spacehost)
 
 
-class TopicViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class TopicViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TopicSerializer
 
