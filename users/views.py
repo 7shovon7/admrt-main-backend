@@ -7,12 +7,7 @@ from rest_framework.viewsets import GenericViewSet
 from core.serializers import UserSerializer
 from .models import SpaceHost, Advertiser, Topic, Language, Portfolio, SocialMedia, AdvertiserProduct
 from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSerializer, LanguageSerializer, PortfolioSerializer, SocialMediaSerializer, ProductSerializer
-
-
-def object_is_not_related(cls, attribute: str):
-    if not hasattr(cls, attribute):
-        return Response(status=status.HTTP_403_FORBIDDEN, data={"details": "wrong profile element"})
-    return
+from .utils import object_is_not_related
 
 
 class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
