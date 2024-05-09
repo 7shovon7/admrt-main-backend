@@ -172,7 +172,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     def create(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         if queryset is None:
-            return super().create(request, *args, **kwargs)
+            return Response(status=status.HTTP_403_FORBIDDEN, data={"details": "Profile creation should have been done at the registration level. Seems like that was not done. Something went wrong."})
         else:
             serializer = self.get_serializer(queryset, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
