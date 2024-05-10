@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language
+from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language, PortfolioImageUploadFragment
 
 
 # Profile Serializers
@@ -34,12 +34,19 @@ class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
         fields = ['id', 'title']
+
+
+class PortfolioImageUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortfolioImageUploadFragment
+        fields = ['id', 'file']
         
 
 class PortfolioSerializer(serializers.ModelSerializer):
+    images = PortfolioImageUploadSerializer(many=True, read_only=True)
     class Meta:
         model = Portfolio
-        fields = ['id', 'title', 'file_url', 'youtube_url']
+        fields = ['id', 'title', 'images', 'youtube_url']
 
 
 class LanguageSerializer(serializers.ModelSerializer):
