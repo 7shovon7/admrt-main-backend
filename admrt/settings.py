@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from config import SECRET_KEY, DEBUG
+from config import *
 from datetime import timedelta
 from pathlib import Path
 
@@ -40,12 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'djoser',
+    'corsheaders',
+    'storages',
+    
     'core',
     'users',
-    # TODO: move corsheaders above core
-    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,11 @@ DJOSER = {
 # global constants for the project
 K_SPACE_HOST_ID = 'space_host'
 K_ADVERTISER_ID = 'advertiser'
+
+# Amazon S3
+AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
+AWS_STORAGE_BUCKET_NAME = AWS_STORAGE_BUCKET_NAME
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_FILE_OVERWRITE = False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
