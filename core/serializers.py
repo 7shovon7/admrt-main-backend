@@ -45,21 +45,14 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
+        image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
             "full_name": self.user.full_name,
+            "profile_image": image_url,
             "phone": self.user.phone,
             "country": self.user.country,
             "user_role": self.user.user_role
         }
-        profile_class = None
-        if self.user.user_role == settings.K_SPACE_HOST_ID:
-            profile_class = SpaceHost
-        elif self.user.user_role == settings.K_ADVERTISER_ID:
-            profile_class = Advertiser
-        if profile_class is not None:
-            profile = profile_class.objects.filter(user=self.user).first()
-            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{profile.profile_image}"
-            data['user']['profile_image'] = str(image_url)
         return data
