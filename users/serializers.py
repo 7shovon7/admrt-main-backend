@@ -6,7 +6,7 @@ from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia
 class SocialMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialMedia
-        fields = ['id', 'social_media', 'username', 'url']
+        fields = ['id', 'social_media', 'url']
 
 
 class ProductSerializer(serializers.ModelSerializer):
