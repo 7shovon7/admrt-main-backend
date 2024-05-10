@@ -1,2 +1,2 @@
 #!/bin/bash
-python manage.py collectstatic && gunicorn --workers 2 admrt.wsgi
+python manage.py migrate && python manage.py collectstatic && gunicorn --workers 2 admrt.wsgi
