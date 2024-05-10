@@ -44,6 +44,14 @@ def change_portfolio_image_filename(instance, filename):
     )
 
 
+def change_product_image_filename(instance, filename):
+    return change_filename(
+        folder_path=f"profile/{instance.product.user.user.id}/products/{instance.product.id}",
+        original_filename=filename,
+        given_filename='image'
+    )
+
+
 class PlatformBaseUser(models.Model):
     profile_image = models.ImageField(upload_to=change_profile_image_filename, null=True, blank=True)
     banner_image = models.ImageField(upload_to=change_banner_image_filename, null=True, blank=True)
@@ -100,7 +108,7 @@ class Topic(models.Model):
 class AdvertiserProduct(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to=change_advertiser_product_image_filename, null=True, blank=True)
+    # image = models.ImageField(upload_to=change_advertiser_product_image_filename, null=True, blank=True)
     user = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name='products')
 
     def __str__(self) -> str:
@@ -108,6 +116,11 @@ class AdvertiserProduct(models.Model):
     
     class Meta:
         ordering = ['name']
+
+
+class ProductImageUploadFragment(models.Model):
+    file = models.ImageField(upload_to=change_product_image_filename)
+    product = models.ForeignKey(AdvertiserProduct, related_name='images', on_delete=models.CASCADE)
 
 
 class Language(models.Model):

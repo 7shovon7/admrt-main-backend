@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language, PortfolioImageUploadFragment
+from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language, PortfolioImageUploadFragment, ProductImageUploadFragment
 
 
 # Profile Serializers
@@ -9,10 +9,17 @@ class SocialMediaSerializer(serializers.ModelSerializer):
         fields = ['id', 'social_media', 'url']
 
 
+class ProductImageUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImageUploadFragment
+        fields = ['id', 'file']
+
+
 class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageUploadSerializer(many=True, read_only=True)
     class Meta:
         model = AdvertiserProduct
-        fields = ['id', 'name', 'description', 'image']
+        fields = ['id', 'name', 'description', 'images']
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
