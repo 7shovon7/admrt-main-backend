@@ -53,7 +53,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     images = PortfolioImageUploadSerializer(many=True, read_only=True)
     class Meta:
         model = Portfolio
-        fields = ['id', 'title', 'images', 'youtube_url']
+        fields = ['id', 'title', 'description', 'images', 'youtube_url']
 
 
 class LanguageSerializer(serializers.ModelSerializer):

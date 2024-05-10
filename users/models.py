@@ -136,6 +136,7 @@ class Language(models.Model):
 
 class Portfolio(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     # file_url = models.ImageField(upload_to=change_portfolio_image_filename, max_length=1024, null=True, blank=True)
     youtube_url = models.URLField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='portfolios')
