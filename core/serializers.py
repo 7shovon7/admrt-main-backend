@@ -2,6 +2,7 @@ from typing import Any, Dict
 from django.conf import settings
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
 from users.models import SpaceHost, Advertiser
@@ -36,9 +37,9 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         token = super().get_token(user)
         token['id'] = user.id
         token['email'] = user.email
-        token['full_name'] = user.first_name
-        token['phone'] = user.phone
-        token['country'] = user.country
+        # token['full_name'] = user.full_name
+        # token['phone'] = user.phone
+        # token['country'] = user.country
         token['user_role'] = user.user_role
         return token
     
@@ -52,4 +53,13 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
             "country": self.user.country,
             "user_role": self.user.user_role
         }
+        profile_class = None
+        if self.user.user_role == settings.K_SPACE_HOST_ID:
+            profile_class = SpaceHost
+        elif self.user.user_role == settings.K_ADVERTISER_ID:
+            profile_class = Advertiser
+        if profile_class is not None:
+            profile = profile_class.objects.filter(user=self.user).first()
+            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{profile.profile_image}"
+            data['user']['profile_image'] = str(image_url)
         return data
