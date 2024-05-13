@@ -1,4 +1,6 @@
 ### Custom ###
+*.db
+staticfiles/
 
 ### Django ###
 *.log
