@@ -2,7 +2,6 @@ from typing import Any, Dict
 from django.conf import settings
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
-from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
 from users.models import SpaceHost, Advertiser
