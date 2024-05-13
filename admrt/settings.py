@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'admrt-main-backend-test-db': {
+    'psql-test-db': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': DB_USER,
@@ -96,7 +96,7 @@ DATABASES = {
 
 
 DB_KEY = DB if DB in DATABASES else 'sqlite3'
-DATABASES['default'] = DATABASES[DB]
+DATABASES['default'] = DATABASES[DB_KEY]
 
 
 # Password validation
