@@ -73,6 +73,12 @@ WSGI_APPLICATION = 'admrt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+DB = os.environ.get('DB', None)
+DB_USER = os.environ.get('DB_USER')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT', '5432')
+
 DATABASES = {
     'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -81,14 +87,14 @@ DATABASES = {
     'admrt-main-backend-test-db': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '4jUZQwiVceKtP6E',
-        'HOST': 'admrt-main-backend-test-db.cd0eu08c2ze7.us-east-1.rds.amazonaws.com',
-        'PORT': '5432',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
 
-DB = os.environ.get('DB', None)
+
 DB_KEY = DB if DB in DATABASES else 'sqlite3'
 DATABASES['default'] = DATABASES[DB]
 
