@@ -45,7 +45,10 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
-        image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
+        if hasattr(self.user, 'profile'):
+            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
+        else:
+            image_url = None
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
