@@ -2,14 +2,16 @@ from typing import Any, Dict
 from django.conf import settings
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
 from users.models import SpaceHost, Advertiser
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
+    username = serializers.CharField(read_only=True)
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -28,7 +30,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'email', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'full_name', 'phone', 'country', 'user_role']
 
 class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
@@ -36,6 +38,7 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         token = super().get_token(user)
         token['id'] = user.id
         token['email'] = user.email
+        token['username'] = user.username
         # token['full_name'] = user.full_name
         # token['phone'] = user.phone
         # token['country'] = user.country
@@ -51,6 +54,7 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
+            "username": self.user.username,
             "full_name": self.user.full_name,
             "profile_image": image_url,
             "phone": self.user.phone,
