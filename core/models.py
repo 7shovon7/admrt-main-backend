@@ -2,14 +2,17 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
+from core.utils import generate_username_from_email
+
 
 class UserManager(BaseUserManager):
     def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('User must have an email address')
         email = self.normalize_email(email)
+        username = generate_username_from_email(email)
         user = self.model(
-            username=email,
+            username=username,
             email=email,
             is_staff=is_staff,
             is_active=True,

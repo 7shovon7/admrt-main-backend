@@ -73,7 +73,7 @@ WSGI_APPLICATION = 'admrt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DB = os.environ.get('DB', None)
+# DB_KEY = os.environ.get('DB_KEY')
 DB_USER = os.environ.get('DB_USER')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOST = os.environ.get('DB_HOST')
@@ -84,19 +84,19 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'admrt-main-backend-test-db': {
+    'postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
-    }
+    },
 }
 
 
-DB_KEY = DB if DB in DATABASES else 'sqlite3'
-DATABASES['default'] = DATABASES[DB]
+DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'postgres'
+DATABASES['default'] = DATABASES[DB_KEY]
 
 
 # Password validation
@@ -148,6 +148,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '50/day',
+        'user': '5000/day',
+    },
 }
 
 SIMPLE_JWT = {
@@ -175,3 +184,6 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_FILE_OVERWRITE = False
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Other env variables
+# GENERAL_AUTH_TOKEN = os.getenv('GENERAL_AUTH_TOKEN', None)

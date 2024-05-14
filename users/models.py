@@ -1,6 +1,7 @@
-from typing import Iterable
+import uuid
 from django.conf import settings
 from django.db import models
+# from django.utils.deconstruct import deconstructible
 
 
 def change_filename(folder_path, original_filename, given_filename):
@@ -35,20 +36,38 @@ def change_advertiser_product_image_filename(instance, filename):
         given_filename='advertiser_product'
     )
 
+# @deconstructible
+# class UploadTo:
+#     def __init__(self, folder_path, custom_file_name):
+#         self.folder_path = folder_path
+#         self.custom_file_name = custom_file_name
+
+#     def __call__(self, instance, filename):
+#         return self.change_filename(self.folder_path, filename, self.custom_file_name)
+
+#     def change_filename(self, folder_path, original_filename, given_filename):
+#         file_parts = original_filename.split('.')
+#         if len(file_parts) > 1:
+#             updated_filename = f"{folder_path}/{given_filename}.{file_parts[-1]}"
+#         else:
+#             updated_filename = f"{folder_path}/{original_filename}"
+#         return updated_filename
+    
+
 
 def change_portfolio_image_filename(instance, filename):
     return change_filename(
-        folder_path=f"profile/{instance.portfolio.user.user.id}/portfolios/{instance.portfolio.id}",
+        folder_path=f"profile/{instance.user.user.id}/portfolios/{instance.id}",
         original_filename=filename,
-        given_filename='image'
+        given_filename=f'{uuid.uuid4()}'
     )
 
 
 def change_product_image_filename(instance, filename):
     return change_filename(
-        folder_path=f"profile/{instance.product.user.user.id}/products/{instance.product.id}",
+        folder_path=f"profile/{instance.user.user.id}/products/{instance.id}",
         original_filename=filename,
-        given_filename='image'
+        given_filename=f'{uuid.uuid4()}'
     )
 
 
@@ -106,9 +125,24 @@ class Topic(models.Model):
 
 
 class AdvertiserProduct(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    # image = models.ImageField(upload_to=change_advertiser_product_image_filename, null=True, blank=True)
+    image1 = models.ImageField(
+        upload_to=change_product_image_filename,
+        null=True,
+        blank=True
+    )
+    image2 = models.ImageField(
+        upload_to=change_product_image_filename,
+        null=True,
+        blank=True
+    )
+    image3 = models.ImageField(
+        upload_to=change_product_image_filename,
+        null=True,
+        blank=True
+    )
     user = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name='products')
 
     def __str__(self) -> str:
@@ -118,9 +152,9 @@ class AdvertiserProduct(models.Model):
         ordering = ['name']
 
 
-class ProductImageUploadFragment(models.Model):
-    file = models.ImageField(upload_to=change_product_image_filename)
-    product = models.ForeignKey(AdvertiserProduct, related_name='images', on_delete=models.CASCADE)
+# class ProductImageUploadFragment(models.Model):
+#     file = models.ImageField(upload_to=change_product_image_filename)
+#     product = models.ForeignKey(AdvertiserProduct, related_name='images', on_delete=models.CASCADE)
 
 
 class Language(models.Model):
@@ -135,9 +169,24 @@ class Language(models.Model):
 
 
 class Portfolio(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    # file_url = models.ImageField(upload_to=change_portfolio_image_filename, max_length=1024, null=True, blank=True)
+    image1 = models.ImageField(
+        upload_to=change_portfolio_image_filename,
+        null=True,
+        blank=True
+    )
+    image2 = models.ImageField(
+        upload_to=change_portfolio_image_filename,
+        null=True,
+        blank=True
+    )
+    image3 = models.ImageField(
+        upload_to=change_portfolio_image_filename,
+        null=True,
+        blank=True
+    )
     youtube_url = models.URLField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='portfolios')
 
@@ -148,9 +197,9 @@ class Portfolio(models.Model):
         ordering = ['title']
 
 
-class PortfolioImageUploadFragment(models.Model):
-    file = models.ImageField(upload_to=change_portfolio_image_filename)
-    portfolio = models.ForeignKey(Portfolio, related_name='images', on_delete=models.CASCADE)
+# class PortfolioImageUploadFragment(models.Model):
+#     file = models.ImageField(upload_to=change_portfolio_image_filename)
+#     portfolio = models.ForeignKey(Portfolio, related_name='images', on_delete=models.CASCADE)
 
 
 class SocialMedia(models.Model):

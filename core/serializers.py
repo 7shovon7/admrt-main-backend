@@ -9,8 +9,9 @@ from users.models import SpaceHost, Advertiser
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
+    username = serializers.CharField(read_only=True)
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -29,7 +30,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'email', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'full_name', 'phone', 'country', 'user_role']
 
 class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
@@ -37,6 +38,7 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         token = super().get_token(user)
         token['id'] = user.id
         token['email'] = user.email
+        token['username'] = user.username
         # token['full_name'] = user.full_name
         # token['phone'] = user.phone
         # token['country'] = user.country
@@ -45,10 +47,14 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
-        image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
+        if hasattr(self.user, 'profile'):
+            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
+        else:
+            image_url = None
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
+            "username": self.user.username,
             "full_name": self.user.full_name,
             "profile_image": image_url,
             "phone": self.user.phone,
