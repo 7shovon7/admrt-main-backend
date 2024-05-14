@@ -73,7 +73,7 @@ WSGI_APPLICATION = 'admrt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DB_KEY = os.environ.get('DB_KEY')
+# DB_KEY = os.environ.get('DB_KEY')
 DB_USER = os.environ.get('DB_USER')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOST = os.environ.get('DB_HOST')
@@ -84,18 +84,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'postgres-db-test': {
+    'postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
-    }
+    },
 }
 
 
-DB_KEY = DB_KEY if DB_KEY in DATABASES else 'sqlite3'
+DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'sqlite3'
 DATABASES['default'] = DATABASES[DB_KEY]
 
 
