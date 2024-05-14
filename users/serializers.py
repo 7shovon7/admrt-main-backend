@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language, PortfolioImageUploadFragment, ProductImageUploadFragment
+from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language
 
 
 # Profile Serializers
@@ -9,17 +9,17 @@ class SocialMediaSerializer(serializers.ModelSerializer):
         fields = ['id', 'social_media', 'url']
 
 
-class ProductImageUploadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImageUploadFragment
-        fields = ['id', 'file']
+# class ProductImageUploadSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProductImageUploadFragment
+#         fields = ['id', 'file']
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    images = ProductImageUploadSerializer(many=True, read_only=True)
+    # images = ProductImageUploadSerializer(many=True, read_only=True)
     class Meta:
         model = AdvertiserProduct
-        fields = ['id', 'name', 'description', 'images']
+        fields = ['id', 'name', 'description', 'image1', 'image2', 'image3']
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
@@ -43,17 +43,17 @@ class TopicSerializer(serializers.ModelSerializer):
         fields = ['id', 'title']
 
 
-class PortfolioImageUploadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PortfolioImageUploadFragment
-        fields = ['id', 'file']
+# class PortfolioImageUploadSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PortfolioImageUploadFragment
+#         fields = ['id', 'file']
         
 
 class PortfolioSerializer(serializers.ModelSerializer):
-    images = PortfolioImageUploadSerializer(many=True, read_only=True)
+    # images = PortfolioImageUploadSerializer(many=True, read_only=True)
     class Meta:
         model = Portfolio
-        fields = ['id', 'title', 'description', 'images', 'youtube_url']
+        fields = ['id', 'title', 'description', 'image1', 'image2', 'image3', 'youtube_url']
 
 
 class LanguageSerializer(serializers.ModelSerializer):
