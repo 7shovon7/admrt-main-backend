@@ -186,4 +186,4 @@ AWS_S3_FILE_OVERWRITE = False
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Other env variables
-GENERAL_AUTH_TOKEN = os.getenv('GENERAL_AUTH_TOKEN', None)
+# GENERAL_AUTH_TOKEN = os.getenv('GENERAL_AUTH_TOKEN', None)
