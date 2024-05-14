@@ -95,7 +95,7 @@ DATABASES = {
 }
 
 
-DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'postgres'
+DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'sqlite3'
 DATABASES['default'] = DATABASES[DB_KEY]
 
 
