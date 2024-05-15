@@ -36,10 +36,13 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
+        if hasattr(user, 'profile'):
+            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{user.profile.profile_image}"
         token['id'] = user.id
         token['email'] = user.email
         token['username'] = user.username
-        # token['full_name'] = user.full_name
+        token['full_name'] = user.full_name
+        token['profile_image'] = image_url
         # token['phone'] = user.phone
         # token['country'] = user.country
         token['user_role'] = user.user_role
