@@ -31,6 +31,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         fields = ['id', 'username', 'email', 'full_name', 'phone', 'country', 'user_role']
+        
 
 class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
