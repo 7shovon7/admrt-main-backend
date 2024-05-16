@@ -10,26 +10,6 @@ from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSeriali
 from .utils import object_is_not_related
 
 
-# class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = SpaceHostSerializer
-    
-#     def get_queryset(self):
-#         user_role = self.request.user.user_role
-#         user_id = self.request.user.id
-#         if user_role == settings.K_ADVERTISER_ID:
-#             queryset = SpaceHost.objects.filter(user=user_id).first()
-#         else:
-#             queryset = None
-#         return queryset
-
-#     def list(self, request):
-#         queryset = self.get_queryset()
-#         serializer_class = self.get_serializer_class()
-#         serializer = serializer_class(queryset, many=False)
-#         return Response(serializer.data)
-
-
 class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ProductSerializer
