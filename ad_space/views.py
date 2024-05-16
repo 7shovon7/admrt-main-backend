@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from rest_framework import permissions
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
@@ -15,10 +16,19 @@ class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     
     def get_queryset(self):
         user_role = self.request.user.user_role
-        user_id = self.request.user.id
-        print(self.request.user.id)
-        if user_role == settings.K_ADVERTISER_ID:
-            queryset = SpaceHost.objects.all().filter(description__contains="fans, max brings")
+        # Search terms
+        search_terms = self.request.GET.get('q').split(' ')
+        if len(search_terms) > 0 and user_role == settings.K_ADVERTISER_ID:
+            # Build the query
+            query = Q()
+            # Conditions for PlatformBaseUser
+            for term in search_terms:
+                query |= Q(user__full_name__icontains=term)
+            # Conditions for SpaceHost
+            for term in search_terms:
+                query |= Q(location__icontains=term) | \
+                        Q(description__icontains=term)
+            queryset = SpaceHost.objects.all().filter(query)
         else:
             queryset = None
         return queryset
