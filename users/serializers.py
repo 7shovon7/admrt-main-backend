@@ -30,11 +30,12 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    user_role = serializers.CharField(source='user.user_role', read_only=True)
     full_name = serializers.CharField(source='user.full_name', read_only=True)
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user_role', 'user']
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -72,8 +73,9 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    user_role = serializers.CharField(source='user.user_role', read_only=True)
     full_name = serializers.CharField(source='user.full_name', read_only=True)
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user_role', 'user']
