@@ -10,54 +10,24 @@ from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSeriali
 from .utils import object_is_not_related
 
 
-# class ProductImageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+# class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 #     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = ProductImageUploadSerializer
-
+#     serializer_class = SpaceHostSerializer
+    
 #     def get_queryset(self):
-#         return ProductImageUploadFragment.objects.filter(product__id=self.kwargs['id']).all()
-    
-#     def create(self, request, *args, **kwargs):
-#         # related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
-#         # if related_object_issue:
-#         #     return related_object_issue
-#         data = request.data
-#         if isinstance(data, list):
-#             serializer = self.get_serializer(data=data, many=True)
+#         user_role = self.request.user.user_role
+#         user_id = self.request.user.id
+#         if user_role == settings.K_ADVERTISER_ID:
+#             queryset = SpaceHost.objects.filter(user=user_id).first()
 #         else:
-#             serializer = self.get_serializer(data=data)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_create(serializer, self.kwargs['id'])
-#         headers = self.get_success_headers(serializer.data)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
-#     def perform_create(self, serializer, pk):
-#         return serializer.save(product=AdvertiserProduct.objects.filter(id=pk).first())
+#             queryset = None
+#         return queryset
 
-
-# class PortfolioImageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = PortfolioImageUploadSerializer
-
-#     def get_queryset(self):
-#         return PortfolioImageUploadFragment.objects.filter(portfolio__id=self.kwargs['id']).all()
-    
-#     def create(self, request, *args, **kwargs):
-#         # related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
-#         # if related_object_issue:
-#         #     return related_object_issue
-#         data = request.data
-#         if isinstance(data, list):
-#             serializer = self.get_serializer(data=data, many=True)
-#         else:
-#             serializer = self.get_serializer(data=data)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_create(serializer, self.kwargs['id'])
-#         headers = self.get_success_headers(serializer.data)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
-#     def perform_create(self, serializer, pk):
-#         return serializer.save(portfolio=Portfolio.objects.filter(id=pk).first())
+#     def list(self, request):
+#         queryset = self.get_queryset()
+#         serializer_class = self.get_serializer_class()
+#         serializer = serializer_class(queryset, many=False)
+#         return Response(serializer.data)
 
 
 class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
@@ -223,3 +193,4 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(serializer.data)
+        
