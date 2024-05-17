@@ -188,6 +188,40 @@ K_SOCIAL_MEDIAS = {
     'wa': 'WhatsApp',
 }
 
+K_AD_TYPES = {
+    'Print': 'Print',
+    'Transportation': 'Transportation',
+    'Event': 'Event',
+    'Other': 'Other',
+}
+
+K_AD_TYPE_FILTERS = {
+    'print': 'Print',
+    'transportation': 'Transportation',
+    'event': 'Event',
+    'other': 'Other',
+    'pr': 'Print',
+    'tr': 'Transportation',
+    'ev': 'Event',
+    'ot': 'Other',
+}
+
+K_SOCIAL_MEDIA_FILTERS = {
+    'fb': 'fb',
+    'yt': 'yt',
+    'ln': 'ln',
+    'in': 'in',
+    'x': 'x',
+    'tt': 'tt',
+    'wa': 'wa',
+    'facebook': 'fb',
+    'youTube': 'yt',
+    'linkedIn': 'ln',
+    'instagram': 'in',
+    'tiktok': 'tt',
+    'whatsapp': 'wa',
+}
+
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
