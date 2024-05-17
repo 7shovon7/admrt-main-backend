@@ -178,6 +178,16 @@ DJOSER = {
 K_SPACE_HOST_ID = 'space_host'
 K_ADVERTISER_ID = 'advertiser'
 
+K_SOCIAL_MEDIAS = {
+    'fb': 'Facebook',
+    'yt': 'YouTube',
+    'ln': 'LinkedIn',
+    'in': 'Instagram',
+    'x': 'X',
+    'tt': 'TikTok',
+    'wa': 'WhatsApp',
+}
+
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
