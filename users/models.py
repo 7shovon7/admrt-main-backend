@@ -203,23 +203,7 @@ class Portfolio(models.Model):
 
 
 class SocialMedia(models.Model):
-    FACEBOOK = 'fb'
-    YOUTUBE = 'yt'
-    LINKEDIN = 'ln'
-    INSTAGRAM = 'in'
-    X = 'x'
-    TIKTOK = 'tt'
-    WHATSAPP = 'wa'
-
-    SM_CHOICES = [
-        (FACEBOOK, 'Facebook'),
-        (YOUTUBE, 'YouTube'),
-        (LINKEDIN, 'LinkedIn'),
-        (INSTAGRAM, 'Instagram'),
-        (X, 'X'),
-        (TIKTOK, 'TikTok'),
-        (WHATSAPP, 'WhatsApp'),
-    ]
+    SM_CHOICES = [(key, value) for key, value in settings.K_SOCIAL_MEDIAS.items()]
 
     social_media = models.CharField(max_length=2, choices=SM_CHOICES)
     # username = models.CharField(max_length=100, null=True, blank=True)
