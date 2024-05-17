@@ -220,17 +220,7 @@ class SocialMedia(models.Model):
         
 
 class AdSpaceForSpaceHost(models.Model):
-    PRINT = "Print"
-    TRANSPORTATION = "Transportation"
-    EVENT = "Event"
-    OTHER = "Other"
-
-    ST_CHOICES = [
-        (PRINT, PRINT),
-        (TRANSPORTATION, TRANSPORTATION),
-        (EVENT, EVENT),
-        (OTHER, OTHER)
-    ]
+    ST_CHOICES = [(key, value) for key, value in settings.K_AD_TYPES.items()]
 
     space_type = models.CharField(max_length=30, choices=ST_CHOICES)
     url = models.URLField(max_length=512)

@@ -21,14 +21,23 @@ class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
         # Search terms
         search_term = self.request.GET.get('q')
         socials = []
-        for key, value in settings.K_SOCIAL_MEDIAS.items():
+        ad_types = []
+        for key, value in settings.K_AD_TYPE_FILTERS.items():
+            key = key.lower()
             sm = self.request.GET.get(key)
-            if sm is not None and sm == 'true':
-                socials.append(key)
+            if sm is not None and sm.lower() == 'true':
+                ad_types.append(value)
+        
+        for key, value in settings.K_SOCIAL_MEDIA_FILTERS.items():
+            key = key.lower()
+            sm = self.request.GET.get(key)
+            if sm is not None and sm.lower() == 'true':
+                socials.append(value)
+
         country = self.request.GET.get('country')
 
         # If nothing is passed return latest 20 host profiles
-        if search_term is None and len(socials) == 0 and country is None:
+        if search_term is None and len(socials) == 0 and len(ad_types) == 0 and country is None:
             return SpaceHost.objects.order_by('-user__id')[:20]
         
         # Build the query
@@ -67,7 +76,9 @@ class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
                 queryset = SpaceHost.objects.all().filter(query).alias(priority=priority_order).order_by('priority').distinct()
         
         if len(socials) > 0:
-            queryset = queryset.filter(socials__social_media__in=socials)
+            queryset = queryset.filter(socials__social_media__in=list(set(socials)))
+        if len(ad_types) > 0:
+            queryset = queryset.filter(ad_spaces__space_type__in=list(set(ad_types)))
         if country is not None:
             queryset = queryset.filter(user__country__iexact=country)
         return queryset[:20]
