@@ -1,14 +1,58 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, status
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from core.serializers import UserSerializer
-from .models import SpaceHost, Advertiser, Topic, Language, Portfolio, SocialMedia, AdvertiserProduct
-from .serializers import SpaceHostSerializer, AdvertiserSerializer, TopicSerializer, LanguageSerializer, PortfolioSerializer, SocialMediaSerializer, ProductSerializer
+from .models import (
+    Topic,
+    Language,
+    Portfolio,
+    SocialMedia,
+    AdvertiserProduct,
+    AdSpaceForSpaceHost,
+)
+from .serializers import (
+    SpaceHostSerializer,
+    AdvertiserSerializer,
+    TopicSerializer,
+    LanguageSerializer,
+    PortfolioSerializer,
+    SocialMediaSerializer,
+    ProductSerializer,
+    AdSpaceForSpaceHostSerializer
+)
 from .utils import object_is_not_related
+    
+
+class AdSpaceForSpaceHostViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdSpaceForSpaceHostSerializer
+
+    def get_queryset(self):
+        return AdSpaceForSpaceHost.objects.filter(user=self.request.user.id).all()
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        else:
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user.profile.spacehost)
 
 
 class AdvertiserProductViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):

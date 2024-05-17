@@ -233,3 +233,21 @@ class SocialMedia(models.Model):
             return self.username
         else:
             return None
+        
+
+class AdSpaceForSpaceHost(models.Model):
+    PRINT = "Print"
+    TRANSPORTATION = "Transportation"
+    EVENT = "Event"
+    OTHER = "Other"
+
+    ST_CHOICES = [
+        (PRINT, PRINT),
+        (TRANSPORTATION, TRANSPORTATION),
+        (EVENT, EVENT),
+        (OTHER, OTHER)
+    ]
+
+    space_type = models.CharField(max_length=30, choices=ST_CHOICES)
+    url = models.URLField(max_length=512)
+    user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='ad_spaces')
