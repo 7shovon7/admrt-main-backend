@@ -17,7 +17,10 @@ class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     def get_queryset(self):
         user_role = self.request.user.user_role
         # Search terms
-        search_terms = self.request.GET.get('q').split(' ')
+        search_term = self.request.GET.get('q')
+        if search_term is None:
+            return SpaceHost.objects.order_by('-user__id')[:20]
+        search_terms = search_term.split(' ')
         if len(search_terms) > 0 and user_role == settings.K_ADVERTISER_ID:
             # Build the query
             query = Q()
@@ -48,7 +51,7 @@ class AdSpaceViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             )
 
             # Now query
-            queryset = SpaceHost.objects.all().filter(query).alias(priority=priority_order).order_by('priority').distinct()
+            queryset = SpaceHost.objects.all().filter(query).alias(priority=priority_order).order_by('priority').distinct()[:20]
         else:
             queryset = None
         return queryset
