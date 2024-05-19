@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q, Max
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
@@ -29,7 +30,7 @@ class ChatViewSet(viewsets.ModelViewSet):
             queryset = self.queryset.filter(conversation_id=conversation_id).order_by('-id')
             return queryset
         else:
-            return None
+            return self.queryset
 
     def list(self, request, *args, **kwargs):
         user_id = request.user.id
@@ -44,7 +45,7 @@ class ChatViewSet(viewsets.ModelViewSet):
         ).annotate(
             latest_chat=Max('chats__created_at')
         ).order_by('-latest_chat')
-        
+
         formatted_list = {}
         for conv_id in conversations:
             other_user = conv_id.users.exclude(id=user_id).first()
@@ -55,7 +56,18 @@ class ChatViewSet(viewsets.ModelViewSet):
                     "profile_image": get_profile_image_url(other_user.profile.profile_image),
                     "unread_messages": unread_count
                 }
-        return Response(formatted_list)
+        return Response({
+            "user_id": user_id,
+            "conversations": formatted_list
+        })
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         sender = self.request.user
@@ -69,3 +81,15 @@ class ChatViewSet(viewsets.ModelViewSet):
             conversation.users.set([sender, receiver])
 
         serializer.save(sender=self.request.user, conversation=conversation)
+
+    @action(detail=False, methods=['post'], url_path='mark-delivered')
+    def mark_as_delivered(self, request):
+        user_id = request.user.id
+        partner_id = request.data.get('partner_id')
+        if partner_id:
+            conversation_id = generate_conversation_id(user_id, partner_id)
+            conversation = get_object_or_404(Conversation, id=conversation_id)
+            Chat.objects.filter(conversation=conversation, receiver=user_id).update(delivered=True)
+            return Response({"success": True})
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
