@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'core',
     'users',
     'ad_space',
+    'chat',
 ]
 
 MIDDLEWARE = [
