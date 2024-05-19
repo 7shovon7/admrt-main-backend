@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
 from users.models import SpaceHost, Advertiser
+from .utils import get_profile_image_url
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -37,8 +38,9 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
+        image_url = None
         if hasattr(user, 'profile'):
-            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{user.profile.profile_image}"
+            image_url = get_profile_image_url(user.profile.profile_image)
         token['id'] = user.id
         token['email'] = user.email
         token['username'] = user.username
@@ -51,10 +53,10 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
+        image_url = None
         if hasattr(self.user, 'profile'):
-            image_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{self.user.profile.profile_image}"
-        else:
-            image_url = None
+            image_url = get_profile_image_url(self.user.profile.profile_image)
+        
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
