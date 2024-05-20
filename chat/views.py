@@ -19,15 +19,18 @@ class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = [IsAuthenticated]
+    
+    partner_id = None
+    conversation_id = None
 
     def get_queryset(self):
         user_id = self.request.user.id
-        partner_id = self.request.GET.get('partner_id')
-        if partner_id:
+        self.partner_id = self.request.GET.get('partner_id')
+        if self.partner_id:
             # Grab the list of messages with that partner only
-            conversation_id = generate_conversation_id(user_id, partner_id)
+            self.conversation_id = generate_conversation_id(user_id, self.partner_id)
             # TODO: have to add limit as well
-            queryset = self.queryset.filter(conversation_id=conversation_id).order_by('-id')
+            queryset = self.queryset.filter(conversation_id=self.conversation_id).order_by('-id')
             return queryset
         else:
             return self.queryset
@@ -36,10 +39,21 @@ class ChatViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         partner_id = request.GET.get('partner_id')
         if partner_id:
+            # Return the chat list from this user's conversation
             queryset = self.get_queryset()
             serializer = self.serializer_class(queryset, many=True)
+
+            # Mark the conversation as delivered
+            conversation = get_object_or_404(Conversation, id=self.conversation_id)
+            if conversation:
+                Chat.objects.filter(conversation=conversation, receiver=user_id).update(delivered=True)
+            else:
+                print('No conversation found!')
+
+            # Return the conversation
             return Response(serializer.data)
-        # Else Grab the whole list of conversations for the user
+        
+        # Else Grab the whole list of conversations summary for the user
         conversations = Conversation.objects.filter(
             Q(id__startswith=f"{user_id}-") | Q(id__endswith=f"-{user_id}")
         ).annotate(
@@ -82,14 +96,14 @@ class ChatViewSet(viewsets.ModelViewSet):
 
         serializer.save(sender=self.request.user, conversation=conversation)
 
-    @action(detail=False, methods=['post'], url_path='mark-delivered')
-    def mark_as_delivered(self, request):
-        user_id = request.user.id
-        partner_id = request.data.get('partner_id')
-        if partner_id:
-            conversation_id = generate_conversation_id(user_id, partner_id)
-            conversation = get_object_or_404(Conversation, id=conversation_id)
-            Chat.objects.filter(conversation=conversation, receiver=user_id).update(delivered=True)
-            return Response({"success": True})
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    # @action(detail=False, methods=['post'], url_path='mark-delivered')
+    # def mark_as_delivered(self, request):
+    #     user_id = request.user.id
+    #     partner_id = request.data.get('partner_id')
+    #     if partner_id:
+    #         conversation_id = generate_conversation_id(user_id, partner_id)
+    #         conversation = get_object_or_404(Conversation, id=conversation_id)
+    #         Chat.objects.filter(conversation=conversation, receiver=user_id).update(delivered=True)
+    #         return Response({"success": True})
+    #     else:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
