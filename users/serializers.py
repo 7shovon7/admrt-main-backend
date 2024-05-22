@@ -14,7 +14,7 @@ from .models import (
 class AdSpaceForSpaceHostSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdSpaceForSpaceHost
-        fields = ['id', 'space_type', 'url']
+        fields = ['id', 'space_type', 'file', 'url']
 
 
 class SocialMediaSerializer(serializers.ModelSerializer):
