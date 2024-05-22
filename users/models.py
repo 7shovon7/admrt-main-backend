@@ -71,6 +71,14 @@ def change_product_image_filename(instance, filename):
     )
 
 
+def change_space_filename(instance, filename):
+    return change_filename(
+        folder_path=f"profile/{instance.user.user.id}/spaces/{instance.id}",
+        original_filename=filename,
+        given_filename=f'{uuid.uuid4()}'
+    )
+
+
 class PlatformBaseUser(models.Model):
     profile_image = models.ImageField(upload_to=change_profile_image_filename, null=True, blank=True)
     banner_image = models.ImageField(upload_to=change_banner_image_filename, null=True, blank=True)
@@ -223,6 +231,9 @@ class SocialMedia(models.Model):
 class AdSpaceForSpaceHost(models.Model):
     ST_CHOICES = [(key, value) for key, value in settings.K_AD_TYPES.items()]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     space_type = models.CharField(max_length=30, choices=ST_CHOICES)
     url = models.URLField(max_length=512)
+    file = models.FileField(upload_to=change_space_filename, null=True, blank=True)
     user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='ad_spaces')
