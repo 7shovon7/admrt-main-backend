@@ -8,7 +8,7 @@ router.register('products', views.AdvertiserProductViewSet, basename='product_vi
 router.register('socials', views.SocialMediaViewSet, basename='social_view_set')
 router.register('ad-space', views.AdSpaceForSpaceHostViewSet, basename='ad_space_view_set')
 router.register('portfolios', views.PortfolioViewSet, basename='portfolio_view_set')
-router.register('languages', views.LanguageViewSet, basename='language_view_set')
+# router.register('languages', views.LanguageViewSet, basename='language_view_set')
 router.register('topics', views.TopicViewSet, basename='topic_view_set')
 router.register('', views.UserViewSet, basename='user_view_set')
 
