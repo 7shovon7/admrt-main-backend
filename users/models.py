@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from django.conf import settings
 from django.db import models
@@ -228,9 +229,14 @@ class SocialMedia(models.Model):
             return None
         
 
+def generate_random_uuid():
+    return str(uuid.uuid4())
+        
+
 class AdSpaceForSpaceHost(models.Model):
     ST_CHOICES = [(key, value) for key, value in settings.K_AD_TYPES.items()]
 
+    # old_id = models.CharField(default=generate_random_uuid, editable=False)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     space_type = models.CharField(max_length=30, choices=ST_CHOICES)
