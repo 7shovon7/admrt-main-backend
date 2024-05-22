@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language, AdSpaceForSpaceHost
+from .models import (
+    SpaceHost,
+    Advertiser,
+    AdvertiserProduct,
+    Topic,
+    SocialMedia,
+    Portfolio,
+    AdSpaceForSpaceHost,
+)
 
 
 # Profile Serializers
@@ -63,15 +71,15 @@ class PortfolioSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'image1', 'image2', 'image3', 'youtube_url']
 
 
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = ['id', 'language']
+# class LanguageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Language
+#         fields = ['id', 'language']
 
 
 class SpaceHostSerializer(serializers.ModelSerializer):
     topics = TopicSerializer(many=True, read_only=True)
-    languages = LanguageSerializer(many=True, read_only=True)
+    # languages = LanguageSerializer(many=True, read_only=True)
     portfolios = PortfolioSerializer(many=True, read_only=True)
     socials = SocialMediaSerializer(many=True, read_only=True)
     ad_spaces = AdSpaceForSpaceHostSerializer(many=True, read_only=True)

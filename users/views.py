@@ -14,7 +14,7 @@ from rest_framework.viewsets import GenericViewSet
 from core.serializers import UserSerializer
 from .models import (
     Topic,
-    Language,
+    # Language,
     Portfolio,
     SocialMedia,
     AdvertiserProduct,
@@ -24,7 +24,7 @@ from .serializers import (
     SpaceHostSerializer,
     AdvertiserSerializer,
     TopicSerializer,
-    LanguageSerializer,
+    # LanguageSerializer,
     PortfolioSerializer,
     SocialMediaSerializer,
     ProductSerializer,
@@ -127,29 +127,29 @@ class PortfolioViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Upd
         return serializer.save(user=self.request.user.profile.spacehost)
 
 
-class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = LanguageSerializer
+# class LanguageViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+#     permission_classes = [permissions.IsAuthenticated]
+#     serializer_class = LanguageSerializer
 
-    def get_queryset(self):
-        return Language.objects.filter(user=self.request.user.id).all()
+#     def get_queryset(self):
+#         return Language.objects.filter(user=self.request.user.id).all()
     
-    def create(self, request, *args, **kwargs):
-        related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
-        if related_object_issue:
-            return related_object_issue
-        data = request.data
-        if isinstance(data, list):
-            serializer = self.get_serializer(data=data, many=True)
-        else:
-            serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+#     def create(self, request, *args, **kwargs):
+#         related_object_issue = object_is_not_related(request.user.profile, 'spacehost')
+#         if related_object_issue:
+#             return related_object_issue
+#         data = request.data
+#         if isinstance(data, list):
+#             serializer = self.get_serializer(data=data, many=True)
+#         else:
+#             serializer = self.get_serializer(data=data)
+#         serializer.is_valid(raise_exception=True)
+#         self.perform_create(serializer)
+#         headers = self.get_success_headers(serializer.data)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
-    def perform_create(self, serializer):
-        return serializer.save(user=self.request.user.profile.spacehost)
+#     def perform_create(self, serializer):
+#         return serializer.save(user=self.request.user.profile.spacehost)
 
 
 class TopicViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):

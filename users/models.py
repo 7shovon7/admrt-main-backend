@@ -84,6 +84,7 @@ class PlatformBaseUser(models.Model):
 
 
 class SpaceHost(PlatformBaseUser):
+    languages = models.CharField(max_length=255, null=True, blank=True)
     long_term_service_availability = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self) -> str:
@@ -157,15 +158,15 @@ class AdvertiserProduct(models.Model):
 #     product = models.ForeignKey(AdvertiserProduct, related_name='images', on_delete=models.CASCADE)
 
 
-class Language(models.Model):
-    language = models.CharField(max_length=100)
-    user = models.ForeignKey(SpaceHost, related_name='languages', on_delete=models.CASCADE)
+# class Language(models.Model):
+#     language = models.CharField(max_length=100)
+#     user = models.ForeignKey(SpaceHost, related_name='languages', on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
-        return self.language
+#     def __str__(self) -> str:
+#         return self.language
     
-    class Meta:
-        ordering = ['language']
+#     class Meta:
+#         ordering = ['language']
 
 
 class Portfolio(models.Model):
