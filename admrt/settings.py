@@ -28,8 +28,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
     'djoser',
+    'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'storages',
     
@@ -93,6 +94,14 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
+    },
+    'local-postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('LOCAL_DB_NAME', 'postgres'),
+        'USER': os.getenv('LOCAL_DB_USER', 'admrt'),
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD', '1234'),
+        'HOST': os.getenv('LOCAL_DB_HOST', 'localhost'),
+        'PORT': os.getenv('LOCAL_DB_PORT', '5432'),
     },
 }
 
@@ -171,9 +180,28 @@ SIMPLE_JWT = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
-        'current_user': 'core.serializers.UserSerializer'
-    }
+        'current_user': 'core.serializers.UserSerializer',
+        'user': 'core.serializers.UserSerializer',
+        'password_reset': 'djoser.serializers.SendEmailResetSerializer',
+        'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
+        'password_change': 'djoser.serializers.SetPasswordSerializer',
+    },
+    'EMAIL': {
+        'password_reset': 'djoser.email.PasswordResetEmail',
+    },
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'LOGOUT_ON_PASSWORD_CHANGE': False,
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'your.smtp.server'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'marsdecoder@gmail.com'
+# EMAIL_HOST_PASSWORD = '12345678'
 
 # global constants for the project
 K_SPACE_HOST_ID = 'space_host'
