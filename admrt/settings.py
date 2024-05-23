@@ -94,6 +94,14 @@ DATABASES = {
         'HOST': DB_HOST,
         'PORT': DB_PORT,
     },
+    'local-postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('LOCAL_DB_NAME', 'postgres'),
+        'USER': os.getenv('LOCAL_DB_USER', 'admrt'),
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD', '1234'),
+        'HOST': os.getenv('LOCAL_DB_HOST', 'localhost'),
+        'PORT': os.getenv('LOCAL_DB_PORT', '5432'),
+    },
 }
 
 
