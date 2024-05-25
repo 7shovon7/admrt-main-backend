@@ -221,6 +221,8 @@ K_AD_TYPES = {
     'Print': 'Print',
     'Transportation': 'Transportation',
     'Event': 'Event',
+    'Email': 'Email',
+    'SMS': 'SMS',
     'Other': 'Other',
 }
 
@@ -228,6 +230,8 @@ K_AD_TYPE_FILTERS = {
     'print': 'Print',
     'transportation': 'Transportation',
     'event': 'Event',
+    'email': 'Email',
+    'sms': 'SMS',
     'other': 'Other',
     'pr': 'Print',
     'tr': 'Transportation',
