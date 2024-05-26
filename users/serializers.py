@@ -49,7 +49,7 @@ class AdvertiserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user_role', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'is_admin', 'joined', 'products', 'socials', 'user_role', 'user']
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -93,4 +93,4 @@ class SpaceHostSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'ad_spaces', 'user_role', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'is_admin', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'ad_spaces', 'user_role', 'user']

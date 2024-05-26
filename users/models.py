@@ -86,6 +86,7 @@ class PlatformBaseUser(models.Model):
     description = models.TextField(null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(max_length=255, null=True, blank=True)
+    is_admin = models.BooleanField(default=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name='profile')
 
     def __str__(self) -> str:
