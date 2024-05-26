@@ -39,30 +39,33 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         image_url = None
+        is_admin = None
         if hasattr(user, 'profile'):
             image_url = get_profile_image_url(user.profile.profile_image)
+            is_admin = user.profile.is_admin
         token['id'] = user.id
         token['email'] = user.email
         token['username'] = user.username
         token['full_name'] = user.full_name
         token['profile_image'] = image_url
-        # token['phone'] = user.phone
-        # token['country'] = user.country
+        token['is_admin'] = is_admin
         token['user_role'] = user.user_role
         return token
     
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
         image_url = None
+        is_admin = None
         if hasattr(self.user, 'profile'):
             image_url = get_profile_image_url(self.user.profile.profile_image)
-        
+            is_admin = self.user.profile.is_admin
         data['user'] = {
             "id": self.user.id,
             "email": self.user.email,
             "username": self.user.username,
             "full_name": self.user.full_name,
             "profile_image": image_url,
+            "is_admin": is_admin,
             "phone": self.user.phone,
             "country": self.user.country,
             "user_role": self.user.user_role
