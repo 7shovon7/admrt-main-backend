@@ -18,6 +18,17 @@ ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://dvuysrcv6p.us-east-1.awsapprunner.com',
+    'https://dev-api.admrt.com',
+    'https://admrt.com',
+    'https://www.admrt.com',
+    'https://dev.admrt.com',
+    'https://*.admrt.com',
+]
+
+CSRF_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
