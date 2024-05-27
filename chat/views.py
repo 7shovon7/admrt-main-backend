@@ -6,9 +6,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Chat, Conversation
-from .serializers import ChatSerializer, ChatUserSerializer
-from .utils import generate_conversation_id
+from chat.models import Chat, Conversation
+from chat.pagination import ChatUserPagination
+from chat.serializers import ChatSerializer, ChatUserSerializer
+from chat.utils import generate_conversation_id
 from core.models import User
 from core.utils import get_profile_image_url
 
@@ -21,6 +22,7 @@ class ChatUserAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['full_name', 'email']
+    pagination_class = ChatUserPagination
     
     def get_queryset(self):
         search_query = self.request.GET.get('search', '')
