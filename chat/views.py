@@ -1,18 +1,34 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q, Max
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import filters, generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Chat, Conversation
-from .serializers import ChatSerializer
+from .serializers import ChatSerializer, ChatUserSerializer
 from .utils import generate_conversation_id
+from core.models import User
 from core.utils import get_profile_image_url
 
 
 User = get_user_model()
+
+
+class ChatUserAPIView(generics.ListAPIView):
+    serializer_class = ChatUserSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['full_name', 'email']
+    
+    def get_queryset(self):
+        search_query = self.request.GET.get('search', '')
+        current_user = self.request.user
+        queryset = User.objects.filter(
+            Q(full_name__icontains=search_query) | Q(email__icontains=search_query)
+        ).exclude(id=current_user.id)
+        return queryset
 
 
 class ChatViewSet(viewsets.ModelViewSet):
