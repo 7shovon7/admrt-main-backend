@@ -5,14 +5,15 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
+from core.models import User
+from core.utils import get_profile_image_url
 from users.models import SpaceHost, Advertiser
-from .utils import get_profile_image_url
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     username = serializers.CharField(read_only=True)
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'username', 'email', 'password', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'password', 'full_name', 'phone', 'country', 'birthday', 'user_role']
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -31,7 +32,20 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'username', 'email', 'full_name', 'phone', 'country', 'user_role']
+        fields = ['id', 'username', 'email', 'full_name', 'phone', 'country', 'birthday', 'user_role']
+        
+        
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['full_name', 'email', 'phone', 'country', 'birthday', 'user_role']
+        read_only_fields = ['email', 'user_role']
+        
+        
+class UserPartialUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['full_name', 'phone', 'country', 'birthday']
         
 
 class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):

@@ -8,4 +8,5 @@ urlpatterns = [
     path('profile/', include('users.urls')),
     path('ad-space/', include('ad_space.urls')),
     path('chat/', include('chat.urls')),
+    path('settings/', include('core.urls')),
 ]

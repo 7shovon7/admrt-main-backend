@@ -40,6 +40,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20)
     full_name = models.CharField(max_length=100)
     country = models.CharField(max_length=60)
+    birthday = models.DateField(null=True, blank=True)
     user_role = models.CharField(max_length=20, choices=ROLE_CHOICES, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
