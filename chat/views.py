@@ -83,9 +83,12 @@ class ChatViewSet(viewsets.ModelViewSet):
             other_user = conv_id.users.exclude(id=user_id).first()
             if other_user:
                 unread_count = Chat.objects.filter(conversation=conv_id, sender=other_user, delivered=False).count()
+                p_image = None
+                if hasattr(other_user, 'profile'):
+                    p_image = get_profile_image_url(other_user.profile.profile_image)
                 formatted_list[other_user.id] = {
                     "full_name": other_user.full_name,
-                    "profile_image": get_profile_image_url(other_user.profile.profile_image),
+                    "profile_image": p_image,
                     "unread_messages": unread_count
                 }
         return Response({
