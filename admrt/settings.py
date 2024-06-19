@@ -18,6 +18,17 @@ ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://dvuysrcv6p.us-east-1.awsapprunner.com',
+    'https://dev-api.admrt.com',
+    'https://admrt.com',
+    'https://www.admrt.com',
+    'https://dev.admrt.com',
+    'https://*.admrt.com',
+]
+
+CSRF_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -28,13 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
     'djoser',
+    'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'storages',
     
     'core',
     'users',
+    'ad_space',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -92,10 +106,18 @@ DATABASES = {
         'HOST': DB_HOST,
         'PORT': DB_PORT,
     },
+    'local-postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('LOCAL_DB_NAME', 'postgres'),
+        'USER': os.getenv('LOCAL_DB_USER', 'admrt'),
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD', '1234'),
+        'HOST': os.getenv('LOCAL_DB_HOST', 'localhost'),
+        'PORT': os.getenv('LOCAL_DB_PORT', '5432'),
+    },
 }
 
 
-DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'postgres'
+DB_KEY = os.environ.get('DB_KEY') if (os.environ.get('DB_KEY') is not None and os.environ.get('DB_KEY') in DATABASES) else 'sqlite3'
 DATABASES['default'] = DATABASES[DB_KEY]
 
 
@@ -148,6 +170,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
@@ -161,21 +184,89 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
-   "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-   "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+   "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+   "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
    "TOKEN_OBTAIN_SERIALIZER": "core.serializers.TokenObtainPairSerializer"
 }
 
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
-        'current_user': 'core.serializers.UserSerializer'
-    }
+        'current_user': 'core.serializers.UserSerializer',
+        'user': 'core.serializers.UserSerializer',
+        'password_reset': 'djoser.serializers.SendEmailResetSerializer',
+        'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
+        'password_change': 'djoser.serializers.SetPasswordSerializer',
+    },
+    'EMAIL': {
+        'password_reset': 'djoser.email.PasswordResetEmail',
+    },
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'LOGOUT_ON_PASSWORD_CHANGE': False,
 }
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # global constants for the project
 K_SPACE_HOST_ID = 'space_host'
 K_ADVERTISER_ID = 'advertiser'
+
+K_SOCIAL_MEDIAS = {
+    'fb': 'Facebook',
+    'yt': 'YouTube',
+    'ln': 'LinkedIn',
+    'in': 'Instagram',
+    'x': 'X',
+    'tt': 'TikTok',
+    'wa': 'WhatsApp',
+}
+
+K_AD_TYPES = {
+    'Print': 'Print',
+    'Transportation': 'Transportation',
+    'Event': 'Event',
+    'Email': 'Email',
+    'SMS': 'SMS',
+    'Other': 'Other',
+}
+
+K_AD_TYPE_FILTERS = {
+    'print': 'Print',
+    'transportation': 'Transportation',
+    'event': 'Event',
+    'email': 'Email',
+    'sms': 'SMS',
+    'other': 'Other',
+    'pr': 'Print',
+    'tr': 'Transportation',
+    'ev': 'Event',
+    'ot': 'Other',
+}
+
+K_SOCIAL_MEDIA_FILTERS = {
+    'fb': 'fb',
+    'yt': 'yt',
+    'ln': 'ln',
+    'in': 'in',
+    'x': 'x',
+    'tt': 'tt',
+    'wa': 'wa',
+    'facebook': 'fb',
+    'youTube': 'yt',
+    'linkedIn': 'ln',
+    'instagram': 'in',
+    'tiktok': 'tt',
+    'whatsapp': 'wa',
+}
 
 # Amazon S3
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')

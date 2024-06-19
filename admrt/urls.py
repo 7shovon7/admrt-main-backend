@@ -6,4 +6,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('profile/', include('users.urls')),
+    path('ad-space/', include('ad_space.urls')),
+    path('chat/', include('chat.urls')),
+    path('settings/', include('core.urls')),
 ]

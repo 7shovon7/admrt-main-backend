@@ -1,8 +1,22 @@
 from rest_framework import serializers
-from .models import SpaceHost, Advertiser, AdvertiserProduct, Topic, SocialMedia, Portfolio, Language
+from .models import (
+    SpaceHost,
+    Advertiser,
+    AdvertiserProduct,
+    Topic,
+    SocialMedia,
+    Portfolio,
+    AdSpaceForSpaceHost,
+)
 
 
 # Profile Serializers
+class AdSpaceForSpaceHostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdSpaceForSpaceHost
+        fields = ['id', 'space_type', 'file', 'url']
+
+
 class SocialMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialMedia
@@ -30,11 +44,12 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    user_role = serializers.CharField(source='user.user_role', read_only=True)
     full_name = serializers.CharField(source='user.full_name', read_only=True)
 
     class Meta:
         model = Advertiser
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'products', 'socials', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'is_admin', 'joined', 'products', 'socials', 'user_role', 'user']
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -56,24 +71,26 @@ class PortfolioSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'image1', 'image2', 'image3', 'youtube_url']
 
 
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = ['id', 'language']
+# class LanguageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Language
+#         fields = ['id', 'language']
 
 
 class SpaceHostSerializer(serializers.ModelSerializer):
     topics = TopicSerializer(many=True, read_only=True)
-    languages = LanguageSerializer(many=True, read_only=True)
+    # languages = LanguageSerializer(many=True, read_only=True)
     portfolios = PortfolioSerializer(many=True, read_only=True)
     socials = SocialMediaSerializer(many=True, read_only=True)
+    ad_spaces = AdSpaceForSpaceHostSerializer(many=True, read_only=True)
     joined = serializers.DateTimeField(source='user.date_joined', read_only=True)
     id = serializers.IntegerField(source='user.id', read_only=True)
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    user_role = serializers.CharField(source='user.user_role', read_only=True)
     full_name = serializers.CharField(source='user.full_name', read_only=True)
     
     class Meta:
         model = SpaceHost
-        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'user']
+        fields = ['id', 'full_name', 'profile_image', 'banner_image', 'description', 'location', 'website', 'is_admin', 'joined', 'long_term_service_availability', 'topics', 'languages', 'portfolios', 'socials', 'ad_spaces', 'user_role', 'user']

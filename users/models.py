@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from django.conf import settings
 from django.db import models
@@ -71,12 +72,21 @@ def change_product_image_filename(instance, filename):
     )
 
 
+def change_space_filename(instance, filename):
+    return change_filename(
+        folder_path=f"profile/{instance.user.user.id}/spaces/{instance.id}",
+        original_filename=filename,
+        given_filename=f'{uuid.uuid4()}'
+    )
+
+
 class PlatformBaseUser(models.Model):
     profile_image = models.ImageField(upload_to=change_profile_image_filename, null=True, blank=True)
     banner_image = models.ImageField(upload_to=change_banner_image_filename, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(max_length=255, null=True, blank=True)
+    is_admin = models.BooleanField(default=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name='profile')
 
     def __str__(self) -> str:
@@ -84,6 +94,7 @@ class PlatformBaseUser(models.Model):
 
 
 class SpaceHost(PlatformBaseUser):
+    languages = models.CharField(max_length=255, null=True, blank=True)
     long_term_service_availability = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self) -> str:
@@ -157,15 +168,15 @@ class AdvertiserProduct(models.Model):
 #     product = models.ForeignKey(AdvertiserProduct, related_name='images', on_delete=models.CASCADE)
 
 
-class Language(models.Model):
-    language = models.CharField(max_length=100)
-    user = models.ForeignKey(SpaceHost, related_name='languages', on_delete=models.CASCADE)
+# class Language(models.Model):
+#     language = models.CharField(max_length=100)
+#     user = models.ForeignKey(SpaceHost, related_name='languages', on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
-        return self.language
+#     def __str__(self) -> str:
+#         return self.language
     
-    class Meta:
-        ordering = ['language']
+#     class Meta:
+#         ordering = ['language']
 
 
 class Portfolio(models.Model):
@@ -203,23 +214,7 @@ class Portfolio(models.Model):
 
 
 class SocialMedia(models.Model):
-    FACEBOOK = 'fb'
-    YOUTUBE = 'yt'
-    LINKEDIN = 'ln'
-    INSTAGRAM = 'in'
-    X = 'x'
-    TIKTOK = 'tt'
-    WHATSAPP = 'wa'
-
-    SM_CHOICES = [
-        (FACEBOOK, 'Facebook'),
-        (YOUTUBE, 'YouTube'),
-        (LINKEDIN, 'LinkedIn'),
-        (INSTAGRAM, 'Instagram'),
-        (X, 'X'),
-        (TIKTOK, 'TikTok'),
-        (WHATSAPP, 'WhatsApp'),
-    ]
+    SM_CHOICES = [(key, value) for key, value in settings.K_SOCIAL_MEDIAS.items()]
 
     social_media = models.CharField(max_length=2, choices=SM_CHOICES)
     # username = models.CharField(max_length=100, null=True, blank=True)
@@ -233,3 +228,18 @@ class SocialMedia(models.Model):
             return self.username
         else:
             return None
+        
+
+def generate_random_uuid():
+    return str(uuid.uuid4())
+        
+
+class AdSpaceForSpaceHost(models.Model):
+    ST_CHOICES = [(key, value) for key, value in settings.K_AD_TYPES.items()]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    space_type = models.CharField(max_length=30, choices=ST_CHOICES)
+    url = models.CharField(max_length=512)
+    file = models.FileField(upload_to=change_space_filename, null=True, blank=True)
+    user = models.ForeignKey(SpaceHost, on_delete=models.CASCADE, related_name='ad_spaces')
