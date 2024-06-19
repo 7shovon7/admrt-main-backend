@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models.functions import Lower
 
 from core.utils import generate_username_from_email
 
@@ -28,15 +29,36 @@ class UserManager(BaseUserManager):
     
     def create_superuser(self, email, password, **extra_fields):
         return self._create_user(email, password, True, True, **extra_fields)
+    
+    
+class LowercaseEmailField(models.EmailField):
+    """
+    Override EmailField to convert emails to lowercase before saving.
+    """
+    def to_python(self, value):
+        """
+        Convert email to lowercase.
+        """
+        value = super(LowercaseEmailField, self).to_python(value)
+        if isinstance(value, str):
+            return value.lower()
+        return value
 
 
 class User(AbstractUser):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                Lower("email"),
+                name="user_email_ci_uniqueness",
+            ),
+        ]
     ROLE_CHOICES = [
         (settings.K_SPACE_HOST_ID, 'Space Host'),
         (settings.K_ADVERTISER_ID, 'Advertiser')
     ]
 
-    email = models.EmailField(max_length=255, unique=True)
+    email = LowercaseEmailField(unique=True)
     phone = models.CharField(max_length=20)
     full_name = models.CharField(max_length=100)
     country = models.CharField(max_length=60)
