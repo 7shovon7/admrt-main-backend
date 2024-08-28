@@ -1,7 +1,14 @@
 from typing import Any, Dict
 from django.conf import settings
+# from django.contrib.auth import get_user_model
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+# from django.utils.crypto import get_random_string
+from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
+# from djoser.serializers import PasswordResetSerializer as DjoserPasswordResetSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as BaseTokenObtainPairSerializer
 
@@ -85,3 +92,79 @@ class TokenObtainPairSerializer(BaseTokenObtainPairSerializer):
             "user_role": self.user.user_role
         }
         return data
+    
+    
+# class PasswordResetSerializer(serializers.Serializer):
+#     email = serializers.EmailField()
+
+#     def validate_email(self, value):
+#         user = User.objects.filter(email=value).first()
+#         if not user:
+#             raise serializers.ValidationError(_("No user is associated with this email address."))
+#         return value
+
+#     def save(self):
+#         user = User.objects.get(email=self.validated_data['email'])
+#         user.set_reset_code()
+
+#         # Send the code via email
+#         send_mail(
+#             'Password reset code',
+#             f'Your password reset code is: {user.reset_code}',
+#             settings.DEFAULT_FROM_EMAIL,
+#             [user.email],
+#             fail_silently=False,
+#         )
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        user = User.objects.filter(email=value).first()
+        if not user:
+            raise serializers.ValidationError("No user is associated with this email address.")
+        return value
+
+    def save(self):
+        user = User.objects.get(email=self.validated_data['email'])
+        user.set_reset_code()
+
+        # Prepare email context
+        context = {
+            'reset_code': user.reset_code,
+            'site_name': 'AdMrt',
+            'full_name': user.full_name,
+        }
+
+        # Render the HTML template
+        html_content = render_to_string('emails/password_reset.html', context)
+        text_content = strip_tags(html_content)
+
+        # Send email
+        email = EmailMultiAlternatives(
+            subject="Password Reset on AdMrt",
+            body=text_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.email],
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+        
+        
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    reset_code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = User.objects.filter(email=data['email']).first()
+        if not user or not user.validate_reset_code(data['reset_code']):
+            raise serializers.ValidationError("Invalid reset code or email.")
+        return data
+
+    def save(self):
+        user = User.objects.get(email=self.validated_data['email'])
+        user.set_password(self.validated_data['new_password'])
+        user.clear_reset_code()
+        user.save()
