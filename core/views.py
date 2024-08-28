@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
@@ -11,7 +11,7 @@ from rest_framework.mixins import (
 )
 
 from .models import User
-from .serializers import UserDetailSerializer, UserPartialUpdateSerializer
+from .serializers import UserDetailSerializer, UserPartialUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
 
 class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = User.objects.all()
@@ -42,6 +42,28 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     #         serializer.save()
     #         return Response(serializer.data)
     #     return Response(serializer.errors, status=400)
+    
+    
+class PasswordResetView(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail": "Password reset code has been sent to your email."}, status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
     
     
 # class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
